@@ -3,12 +3,14 @@
 include "config.php";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = pg_connect("host=$server dbname=$db user=$username password=$password")  or die("Could not connect");
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
+$stat = pg_connection_status($conn);
+if (! $stat === PGSQL_CONNECTION_OK) {
+    echo 'Connection status bad <br>';
+    exit();
+}
+
 
 $last_id = $_GET["last_id"];
 
@@ -17,19 +19,19 @@ if ($last_id == "") {
 }
 
 $sql = "SELECT * FROM gpspos WHERE id > " . $last_id;
-$result = $conn->query($sql);
+$result = pg_query($conn, $sql);
 
 echo "<table><tr><th>ID</th><th>Lat</th><th>Lon</th></tr>";
-if ($result->num_rows > 0) {
+if (pg_num_rows($result) > 0) {
     // output data of each row
-    while($row = $result->fetch_assoc()) {
+    while($row = pg_fetch_assoc($result)) {
         echo "<tr><td>" . $row["id"] . "</td><td>" . $row["lat_coord"] . "</td><td>" . $row["lon_coord"] . "</td></tr>";
     }
 } else {
     //echo "<tr><td>-</td><td>-</td><td>-</td></tr>";
 }
 echo "</table>";
-$conn->close();
+//$conn->close();
 
 ?>
 

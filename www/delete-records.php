@@ -11,12 +11,17 @@ if (!$stat === PGSQL_CONNECTION_OK) {
     exit();
 }
 
-$sql = "INSERT INTO gpspos (lat_coord, lon_coord) VALUES ('" . $_GET["lat"] . "', '" . $_GET["lon"] . "')";
+$last_id = $_GET['last_id'];
+if($last_id != undefined){
+  $sql = "DELETE FROM gpspos WHERE id < $last_id";
 
-if (pg_query($conn, $sql)) {
+  if (pg_query($conn, $sql)) {
     echo "OK";
-} else {
+  } else {
     echo "ERROR: " . $sql . "<br>";
+  }
+}else{
+  echo "No records were deleted";
 }
 
 //$conn->close();

@@ -1,4 +1,4 @@
-FROM mysql
+FROM postgres
 
 # According do the documentation section "Initializing a fresh instance"
 # (https://hub.docker.com/_/mysql/), everything inside 

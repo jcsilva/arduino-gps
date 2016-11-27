@@ -1,0 +1,25 @@
+# based on http://stackoverflow.com/questions/34694933/how-to-link-multiple-docker-containers-and-encapsulate-the-result
+
+version: '2'
+services:
+  db:
+    container_name: postgres-server
+    build: postgres-db/
+    environment:
+     POSTGRES_PASSWORD: "1234"
+    networks:
+      - mynet
+
+  web:
+    container_name: apache-server
+    build: apache-php/
+    volumes: 
+      - ./www/:/var/www/html/
+    networks:
+      - mynet
+    ports:
+      - 8080:80
+
+networks:
+  mynet:
+    driver: bridge
