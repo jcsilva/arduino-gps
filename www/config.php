@@ -1,15 +1,16 @@
 <?php
 // When using Heroku
-//$url = parse_url(getenv("DATABASE_URL"));
-//$server = $url["host"];
-//$username = $url["user"];
-//$password = $url["pass"];
-//$db = substr($url["path"], 1);
-
+if(getenv("DATABASE_URL")){
+  $url = parse_url(getenv("DATABASE_URL"));
+  $server = $url["host"];
+  $username = $url["user"];
+  $password = $url["pass"];
+  $db = substr($url["path"], 1);
+} else{
 // When using Docker
-$server = 'postgres-server'; //$url["host"];
-$username = 'postgres'; //'gpsuser'; //$url["user"];
-$password = '1234'; //$url["pass"];
-$db = 'gpstrack'; //substr($url["path"], 1);
-
+$server = 'postgres-server';
+$username = 'postgres';
+$password = '1234'; 
+$db = 'gpstrack'; 
+}
 ?>

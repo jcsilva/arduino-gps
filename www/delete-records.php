@@ -13,7 +13,7 @@ if (!$stat === PGSQL_CONNECTION_OK) {
 
 $last_id = $_GET['last_id'];
 if($last_id != undefined){
-  $sql = "DELETE FROM gpspos WHERE id < $last_id";
+  $sql = "DELETE FROM gpspos WHERE id <= $last_id";
 
   if (pg_query($conn, $sql)) {
     echo "OK";
