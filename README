@@ -1,5 +1,53 @@
+LOCAL (DOCKER)
+--------------
 First of all, you must install docker-compose (https://docs.docker.com/compose/).
 
 In Ubuntu 16.04, you may use apt-get install docker-compose.
 
 After that, just change to the directory where the file docker-compose.yml is located and run docker-compose up
+
+
+REMOTE (HEROKU)
+---------------
+PARA CRIAR UMA TABELA NO BANCO POSGRESQL DO HEROKU
+--------------------------------------------------
+http://stackoverflow.com/questions/20775490/heroku-postgres-database-create-table
+
+First you login to your heroku account
+Then you go to databases section 3 There you create a database by clicking on Create Database
+Then your heroku database is created and you get to see its details such as
+
+host = ...
+
+database = ...
+
+User = ...
+
+Port = ...
+
+Password = ...
+
+Now Connect to the database using PostgreSQL’s interactive terminal client.
+
+If you don't have it already installed then you’ll have to turn to your platform’s package management suite (e.g. on Ubuntu run sudo apt-get install postgresql-client) or go to postgresql.org, where you’ll find available for download pre-built binary packages suitable for FreeBSD, Linux, Mac, Solaris and Windows, as well as other installation options.
+
+To connect, call psql with the -h option to specify the server’s hostname, -U to specify     the username, and then the database name:
+
+root@yogesh-System-model:~# psql -h [**Host Name**] -U [**User Name**] [**database Name**]
+    Password for user hdwvhbehqlishy: ********
+    psql (8.4.9, server 9.0.5)
+    WARNING: psql version 8.4, server version 9.0.
+     Some psql features might not work.
+    SSL connection (cipher: DHE-RSA-AES256-SHA, bits: 256)
+    Type "help" for help.
+
+
+df7r55a12o64m4==> CREATE TABLE [Table_name](your_id SERIAL, Name text, Address text);
+NO MEU CASO: 
+create table gpspos (id serial not null primary key, lat_coord varchar(20), lon_coord varchar(20));
+
+That will create a table....
+
+I know owner of this question has already solved the problem but still posting this answer for future references....
+
+If any problems can refer this tutorial (https://www.sitepoint.com/hosted-postgresql-with-heroku/)
