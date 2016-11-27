@@ -1,0 +1,120 @@
+<html>
+ <head>
+ <!-- styles put here, but you can include a CSS file and reference it instead! -->
+   <style type="text/css">
+     html, body { height: 100%; margin: 0; padding: 0; }
+     #map { height: 100%; }
+   </style>
+   <meta charset="utf-8"/>
+ </head>
+ <body>
+   <div id="map"></div>
+
+   <script src="jquery-3.1.1.min.js"></script>
+
+   <!--Load the JS API ASYNCHRONOUSLY below.-->   
+   <script async defer 
+      src="https://maps.googleapis.com/maps/api/js?libraries=drawing&key=AIzaSyABAYuA8PveqCjdMZgo85wrcwJk1h-vEbA&v=3&callback=initMap">
+   </script>
+   
+   <script>
+     var map;
+     var drawingManager;
+     var snappedCoordinates;
+     var lastMarker;
+     var lastId = 0; 
+     
+     function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat:-23.563594, lng:-46.654239},
+          zoom: 13,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        // Ref: https://developers.google.com/maps/documentation/roads/snap
+        // Enables the polyline drawing control. Click on the map to start drawing a
+        // polyline. Each click will add a new vertice. Double-click to stop drawing.
+        drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.POLYLINE,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+              google.maps.drawing.OverlayType.POLYLINE
+            ]
+          },
+          polylineOptions: {
+            strokeColor: '#696969',
+            strokeWeight: 2
+          }
+        });
+        drawingManager.setMap(map);
+     }
+
+
+     function plotMarker(latlng){
+     	var marker=new google.maps.Marker({
+          position:latlng,
+          map: map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillOpacity: 0.5,
+            fillColor: '#ff0000',
+            strokeOpacity: 1.0,
+            strokeColor: '#fff000',
+            strokeWeight: 3.0, 
+            scale: 5 //pixels
+          }
+        });
+         return marker;
+     }
+
+
+     $(document).ready(function() {
+        function loadData() {
+            snappedCoordinates = []; // throw away old coordinates.
+            $.get("get-records-json.php?last_id=" + lastId, function(data, statusTxt) {
+                if(statusTxt == "success") {
+                    var gpsRecords = JSON.parse(JSON.stringify(data));
+                    
+                    if (lastMarker != undefined && gpsRecords.records.length > 0) {
+                        lastMarker.setAnimation(null);
+                        snappedCoordinates.push(lastMarker.position);
+                    }
+                    
+                    for(i = 0; i < gpsRecords.records.length; i++){
+                       var latlng = new google.maps.LatLng(
+                           gpsRecords.records[i].lat,
+                           gpsRecords.records[i].lon);
+                       snappedCoordinates.push(latlng);
+                       lastMarker = plotMarker(latlng);
+                    }
+                    
+                    lastId = parseInt(gpsRecords.last_id);
+
+                    // TODO: should I test if snappedCoordinates.length > 0
+                    // before doing it? I believe it is unnecessary...
+                    lastMarker.setAnimation(google.maps.Animation.BOUNCE);
+                    drawSnappedPolyline();
+                }
+                if(statusTxt == "error")
+                    alert("Error downloading JSON data");
+            });
+        }
+        setInterval(loadData, 2000); 
+      });
+
+
+      // Draws the snapped polyline
+      function drawSnappedPolyline() {
+          var snappedPolyline = new google.maps.Polyline({
+              path: snappedCoordinates,
+              strokeColor: 'black',
+              strokeWeight: 3
+           });
+           snappedPolyline.setMap(map);
+        }
+
+   </script>
+ </body>
+</html>

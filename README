@@ -1,0 +1,5 @@
+First of all, you must install docker-compose (https://docs.docker.com/compose/).
+
+In Ubuntu 16.04, you may use apt-get install docker-compose.
+
+After that, just change to the directory where the file docker-compose.yml is located and run docker-compose up
