@@ -49,6 +49,32 @@
          return marker;
      }
 
+    // GPS coords are in NMEA standard.
+    // Google Maps works with decimal degrees.
+    // We must convert
+    function Nmea2DecimalCoord(coordinates){
+      /* Sample from gps 5153.6605*/
+      /* Check limits*/
+      var b;//to store the degrees
+      var c; //to store de decimal
+      var x = parseFloat(coordinates);
+      var sig = false;
+      if (x < 0){
+	sig = true;
+        x = -1 * x;
+      }
+      /*Calculate the value in format nn.nnnnnn*/
+      /*Explanations at:
+      http://www.mapwindow.org/phorum/read.php?3,16271,16310*/
+
+      b = Math.floor(x/100);  // 51 degrees
+      c= (x/100 - b)*100 ;    //(51.536605 - 51)* 100 = 53.6605
+      c /= 60;                // 53.6605 / 60 = 0.8943417
+      c += b;                 // 0.i8943417 + 51 = 51.8943417
+      if (sig) c = -1 * c;
+      return c;
+    }
+
 
      $(document).ready(function() {
         function loadData() {
@@ -64,8 +90,8 @@
                     
                     for(i = 0; i < gpsRecords.records.length; i++){
                        var latlng = new google.maps.LatLng(
-                           gpsRecords.records[i].lat,
-                           gpsRecords.records[i].lon);
+                           Nmea2DecimalCoord(gpsRecords.records[i].lat),
+                           Nmea2DecimalCoord(gpsRecords.records[i].lon));
                        snappedCoordinates.push(latlng);
                        lastMarker = plotMarker(latlng);
                     }
