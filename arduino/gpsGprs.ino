@@ -52,8 +52,8 @@ void setup(){
   //sendATcommand("AT+CSOCKAUTH=1,1,,\"web\",\"web\"","OK",1000);
 
   // set GPS server without certificate
-//  sendATcommand("AT+CGPSURL=\"supl.google.com:7276\"","OK",1000);
-//  sendATcommand("AT+CGPSSSL=0","OK",1000);
+  sendATcommand("AT+CGPSURL=\"supl.google.com:7276\"","OK",1000);
+  sendATcommand("AT+CGPSSSL=0","OK",1000);
   
   // start gps node in GPS-MS
   int8_t answer = sendATcommand("AT+CGPS=1,2","OK",1000);
